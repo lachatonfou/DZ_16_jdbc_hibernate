@@ -1,2 +1,4 @@
-package jdbc;public class ZooTests {
+package jdbc;
+
+public class ZooTests {
 }
