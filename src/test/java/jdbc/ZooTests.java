@@ -1,25 +1,15 @@
 package jdbc;
 
 import jdbc.models.Animal;
-import jdbc.utils.DatabaseUtils;
+import utils.DatabaseUtils;
 import jdbc.utils.CRUDUtils;
-import jdbc.models.Places;
-import jdbc.utils.DatabaseConnection;
+import utils.DatabaseConnection;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ZooTests {

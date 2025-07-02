@@ -1,8 +1,8 @@
 package jdbc.utils;
 
 import jdbc.models.Animal;
-import jdbc.models.Places;
 import lombok.SneakyThrows;
+import utils.DatabaseConnection;
 
 import java.sql.*;
 import java.util.ArrayList;

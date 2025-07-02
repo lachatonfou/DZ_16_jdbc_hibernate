@@ -1,4 +1,4 @@
-package jdbc.utils;
+package utils;
 
 import lombok.SneakyThrows;
 

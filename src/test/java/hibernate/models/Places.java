@@ -1,20 +1,20 @@
-package jdbc.models;
+package hibernate.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Table(name = "places")
 public class Places {
+    @Id
+    @Column(name = "id")
     private int id;
+    @Column(name = "`row`")
     private int row;
+    @Column(name = "place_num")
     private int place_num;
+    @Column(name = "`name`")
     private String name;
-
-    public Places(int id, int row, int place_num, String name) {
-        this.id = id;
-        this.row = row;
-        this.place_num = place_num;
-        this.name = name;
-    }
 
     public int getId() {
         return id;
