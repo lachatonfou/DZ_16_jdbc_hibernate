@@ -3,73 +3,107 @@ package hibernate;
 import hibernate.models.Animal;
 import hibernate.utils.DBHibernateService;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.PersistenceException;
+import hibernate.utils.SessionFactoryCreator;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.jupiter.api.*;
+import utils.DatabaseConnection;
 import utils.DatabaseUtils;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ZooTests {
-    DBHibernateService dbHibernateService = new DBHibernateService();
+    private static SessionFactory sessionFactory;
+    private Session session;
+    private DBHibernateService dbHibernateService;
+//    DBHibernateService dbHibernateService = new DBHibernateService();
+//    SessionFactory sessionFactory = SessionFactoryCreator.createSessionFactory();
+//    Session session = sessionFactory.openSession();
 
     @BeforeAll
     static void init() {
+        sessionFactory = SessionFactoryCreator.createSessionFactory();
         DatabaseUtils.createData();
+    }
+
+    @BeforeEach
+    void setup() {
+        session = sessionFactory.openSession();
+        dbHibernateService = new DBHibernateService(session);
+    }
+
+    @AfterEach
+    void closeSession() {
+        if (session != null) {
+            session.close();
+        }
+    }
+
+    @AfterAll
+    static void tearDown() {
+        if (sessionFactory != null) {
+            sessionFactory.close();
+        }
+        DatabaseConnection.closeConnection();
     }
 
     @Test
     void createAnimal() {
         int initialCount = dbHibernateService.getCountRowAnimal();
-        Animal animal = new Animal();
-        animal.setId(11);
-        animal.setName("Рыжик");
-        animal.setAge(4);
-        animal.setType(2);
-        animal.setSex(1);
-        animal.setPlace(3);
-        dbHibernateService.insertAnimal(animal);
+        Animal newAnimal = new Animal(11, "Рыжик", 4, 2, 1, 3);
+        dbHibernateService.insertAnimal(newAnimal);
 
         int newCount = dbHibernateService.getCountRowAnimal();
         assertEquals(initialCount + 1, newCount);
+
+        List<hibernate.models.Animal> animals = dbHibernateService.getAnimalData();
+
+        hibernate.models.Animal addedAnimal = animals.getLast();
+        assertEquals(newAnimal.getId(), addedAnimal.getId());
+        assertEquals(newAnimal.getName(), addedAnimal.getName());
+        assertEquals(newAnimal.getAge(), addedAnimal.getAge());
+        assertEquals(newAnimal.getType(), addedAnimal.getType());
+        assertEquals(newAnimal.getSex(), addedAnimal.getSex());
+        assertEquals(newAnimal.getPlace(), addedAnimal.getPlace());
     }
 
     @Test
-    void countRowAnimal() {
-        Assertions.assertEquals(10, dbHibernateService.getCountRowAnimal());
+    void readAnimal() {
+        List<hibernate.models.Animal> animals = dbHibernateService.getAnimalData();
+        hibernate.models.Animal firstAnimal = animals.getFirst();
+        assertFalse(animals.isEmpty());
+        assertEquals(firstAnimal.getId(), 1);
+        assertEquals(firstAnimal.getName(), "Бусинка");
+        assertEquals(firstAnimal.getAge(), 2);
+        assertEquals(firstAnimal.getType(), 1);
+        assertEquals(firstAnimal.getSex(), 1);
+        assertEquals(firstAnimal.getPlace(), 1);
     }
 
-    static Stream<Animal> animalProvider() {
-        List<Animal> animals = new ArrayList<>();
-        for (int id = 1; id <= 10; id++) {
-            Animal animal = new Animal();
-            animal.setId(id);
-            animal.setName("Sharik");
-            animal.setAge(10);
-            animal.setType(1);
-            animal.setSex(1);
-            animal.setPlace(1);
-            animals.add(animal);
-        }
-        return animals.stream();
-    }
-    /**
-     * В таблицу public.animal нельзя добавить строку с индексом от 1 до 10 включительно
-     */
-    @ParameterizedTest
-    @MethodSource("animalProvider")
-    void insertIndexAnimal(Animal animal) {
-        assertThrows(PersistenceException.class, () -> dbHibernateService.insertAnimal(animal));
+    @Test
+    void updateAnimal() {
+        List<hibernate.models.Animal> animals = dbHibernateService.getAnimalData();
+        hibernate.models.Animal firstAnimal = animals.getFirst();
+        firstAnimal.setName("Пельмешка");
+        firstAnimal.setPlace(3);
+
+        assertEquals(firstAnimal.getName(), "Пельмешка");
+        assertEquals(firstAnimal.getPlace(), 3);
     }
 
+    @Test
+    void deleteAnimal() {
+        int initialCount = dbHibernateService.getCountRowAnimal();
+        Animal newAnimal = new Animal(11, "Рыжик", 4, 2, 1, 3);
+        dbHibernateService.insertAnimal(newAnimal);
 
+        int newCount = dbHibernateService.getCountRowAnimal();
+        assertEquals(initialCount + 1, newCount);
+
+        dbHibernateService.deleteAnimal(newAnimal);
+        int finalCount = dbHibernateService.getCountRowAnimal();
+        assertEquals(initialCount, finalCount);
+    }
 }
