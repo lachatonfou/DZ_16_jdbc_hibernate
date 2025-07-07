@@ -1,6 +1,7 @@
 package jdbc;
 
 import jdbc.models.Animal;
+import org.assertj.core.api.SoftAssertions;
 import utils.DatabaseUtils;
 import jdbc.utils.CRUDUtils;
 import utils.DatabaseConnection;
@@ -33,25 +34,43 @@ public class ZooTests {
 
         List<Animal> animals = CRUDUtils.getAnimalData("SELECT * FROM public.animal WHERE Id =" + newAnimal.getId());
         Animal addedAnimal = animals.getLast();
-        assertEquals(newAnimal.getId(), addedAnimal.getId());
-        assertEquals(newAnimal.getName(), addedAnimal.getName());
-        assertEquals(newAnimal.getAge(), addedAnimal.getAge());
-        assertEquals(newAnimal.getType(), addedAnimal.getType());
-        assertEquals(newAnimal.getSex(), addedAnimal.getSex());
-        assertEquals(newAnimal.getPlace(), addedAnimal.getPlace());
+//        assertEquals(newAnimal.getId(), addedAnimal.getId());
+//        assertEquals(newAnimal.getName(), addedAnimal.getName());
+//        assertEquals(newAnimal.getAge(), addedAnimal.getAge());
+//        assertEquals(newAnimal.getType(), addedAnimal.getType());
+//        assertEquals(newAnimal.getSex(), addedAnimal.getSex());
+//        assertEquals(newAnimal.getPlace(), addedAnimal.getPlace());
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(newAnimal.getId()).isEqualTo(addedAnimal.getId());
+        softly.assertThat(newAnimal.getName()).isEqualTo(addedAnimal.getName());
+        softly.assertThat(newAnimal.getAge()).isEqualTo(addedAnimal.getAge());
+        softly.assertThat(newAnimal.getType()).isEqualTo(addedAnimal.getType());
+        softly.assertThat(newAnimal.getSex()).isEqualTo(addedAnimal.getSex());
+        softly.assertThat(newAnimal.getPlace()).isEqualTo(addedAnimal.getPlace());
+        softly.assertAll();
     }
 
     @Test
     void readAnimal() {
         List<Animal> animals = CRUDUtils.getAnimalData("SELECT * FROM public.animal");
         Animal firstAnimal = animals.getFirst();
-        assertFalse(animals.isEmpty());
-        assertEquals(firstAnimal.getId(), 1);
-        assertEquals(firstAnimal.getName(), "Бусинка");
-        assertEquals(firstAnimal.getAge(), 2);
-        assertEquals(firstAnimal.getType(), 1);
-        assertEquals(firstAnimal.getSex(), 1);
-        assertEquals(firstAnimal.getPlace(), 1);
+//        assertFalse(animals.isEmpty());
+//        assertEquals(firstAnimal.getId(), 1);
+//        assertEquals(firstAnimal.getName(), "Бусинка");
+//        assertEquals(firstAnimal.getAge(), 2);
+//        assertEquals(firstAnimal.getType(), 1);
+//        assertEquals(firstAnimal.getSex(), 1);
+//        assertEquals(firstAnimal.getPlace(), 1);
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(firstAnimal.getId()).isEqualTo(1);
+        softly.assertThat(firstAnimal.getName()).isEqualTo("Бусинка");
+        softly.assertThat(firstAnimal.getAge()).isEqualTo(2);
+        softly.assertThat(firstAnimal.getType()).isEqualTo(1);
+        softly.assertThat(firstAnimal.getSex()).isEqualTo(1);
+        softly.assertThat(firstAnimal.getPlace()).isEqualTo(1);
+        softly.assertAll();
     }
 
     @Test
